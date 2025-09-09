@@ -27,6 +27,26 @@ class NFLStatsCollector:
         
         return week, season
     
+    def get_latest_available_data(self) -> tuple[int, int]:
+        """Get the latest week and season available in the NFL data library"""
+        current_year = datetime.now().year
+        
+        # Try current year first, then fallback to previous year
+        for season in [current_year, current_year - 1]:
+            try:
+                weekly_data = nfl.import_weekly_data([season])
+                if not weekly_data.empty:
+                    latest_week = int(weekly_data['week'].max())
+                    self.logger.info(f"Latest available data: {season} Week {latest_week}")
+                    return latest_week, season
+            except Exception as e:
+                self.logger.debug(f"No data available for {season}: {e}")
+                continue
+        
+        # Fallback to 2024 Week 18 if nothing else works
+        self.logger.warning("Could not find current data, falling back to 2024 Week 18")
+        return 18, 2024
+    
     def collect_weekly_stats(self, week: int, season: int) -> List[PlayerWeeklyStats]:
         """Collect weekly stats for all players"""
         self.logger.info(f"Collecting stats for Week {week}, {season}")

@@ -167,6 +167,19 @@ class DatabaseManager:
             columns = [description[0] for description in cursor.description]
             return [dict(zip(columns, row)) for row in cursor.fetchall()]
     
+    def get_latest_data_in_db(self) -> tuple[int, int]:
+        """Get the latest week and season stored in the database"""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.execute("""
+                SELECT season, week FROM player_stats 
+                ORDER BY season DESC, week DESC 
+                LIMIT 1
+            """)
+            result = cursor.fetchone()
+            if result:
+                return int(result[1]), int(result[0])  # week, season
+            return 1, 2024  # Default fallback
+    
     def save_weekly_analysis(self, analysis: WeeklyAnalysis):
         with sqlite3.connect(self.db_path) as conn:
             conn.execute("""

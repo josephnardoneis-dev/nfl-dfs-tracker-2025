@@ -20,8 +20,12 @@ salary_collector = DFSSalaryCollector(db_manager)
 @app.route('/')
 def index():
     """Main dashboard"""
-    # Use 2024 Week 18 data (latest available in nfl_data_py)
-    week, season = 18, 2024
+    # Automatically get the latest available data
+    try:
+        week, season = stats_collector.get_latest_available_data()
+    except Exception as e:
+        print(f"Error getting latest data, using fallback: {e}")
+        week, season = 18, 2024  # Fallback
     
     # Get latest report
     try:
@@ -98,8 +102,8 @@ def get_salary_trends():
 def collect_latest_data():
     """Manually trigger data collection"""
     try:
-        # Use 2024 Week 18 data (latest available in nfl_data_py library)
-        target_week, target_season = 18, 2024
+        # Get the latest available data automatically
+        target_week, target_season = stats_collector.get_latest_available_data()
         
         # Try to collect stats but handle gracefully if no new data
         try:
@@ -127,7 +131,7 @@ def collect_latest_data():
         
         return jsonify({
             'success': True,
-            'message': 'Data refresh completed (using Week 18 2024 data)',
+            'message': f'Data refresh completed (using {target_season} Week {target_week} data)',
             'stats_collected': stats_count,
             'salary_records': salary_count,
             'analyses_completed': analysis_count,
