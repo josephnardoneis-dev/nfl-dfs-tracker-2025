@@ -227,7 +227,7 @@ class NFLDFSAnalysisEngine:
             FROM dfs_salaries
             WHERE week >= (SELECT MAX(week) - ? FROM dfs_salaries)
             GROUP BY player_id, player_name
-            HAVING weeks_tracked >= 3
+            HAVING weeks_tracked >= 1
             ORDER BY avg_dk_change DESC
         """
         
