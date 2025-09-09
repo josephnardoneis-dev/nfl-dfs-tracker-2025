@@ -21,10 +21,10 @@ wheels/
 *.egg
 MANIFEST
 
-# Database files
-*.db
-*.sqlite3
-nfl_dfs_tracker.db
+# Database files (excluding our populated data)
+# *.db
+# *.sqlite3
+# nfl_dfs_tracker.db
 
 # Log files
 *.log
