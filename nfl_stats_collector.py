@@ -39,7 +39,7 @@ class NFLStatsCollector:
             week_data = weekly_data[weekly_data['week'] == week].copy()
             
             # Get roster data for position info
-            roster_data = nfl.import_rosters([season])
+            roster_data = nfl.import_weekly_rosters([season])
             
             # Merge with roster for position info
             merged_data = week_data.merge(

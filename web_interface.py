@@ -20,19 +20,21 @@ salary_collector = DFSSalaryCollector(db_manager)
 @app.route('/')
 def index():
     """Main dashboard"""
-    current_week, current_season = stats_collector.get_current_week()
+    # Use our actual data (Week 18, 2024)
+    week, season = 18, 2024
     
     # Get latest report
     try:
-        report = analyzer.generate_weekly_report(current_week - 1, current_season)
+        report = analyzer.generate_weekly_report(week, season)
         summary_stats = report.get('summary_stats', {})
-    except:
+    except Exception as e:
+        print(f"Error generating report: {e}")
         report = {}
         summary_stats = {}
     
     return render_template('index.html', 
-                         week=current_week-1, 
-                         season=current_season,
+                         week=week, 
+                         season=season,
                          summary_stats=summary_stats)
 
 @app.route('/api/weekly-report/<int:season>/<int:week>')
@@ -133,4 +135,5 @@ def trends_page():
     return render_template('trends.html')
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    # For local development
+    app.run(debug=True, host='0.0.0.0', port=5001)

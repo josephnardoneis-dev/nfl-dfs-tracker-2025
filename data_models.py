@@ -166,3 +166,13 @@ class DatabaseManager:
             
             columns = [description[0] for description in cursor.description]
             return [dict(zip(columns, row)) for row in cursor.fetchall()]
+    
+    def save_weekly_analysis(self, analysis: WeeklyAnalysis):
+        with sqlite3.connect(self.db_path) as conn:
+            conn.execute("""
+                INSERT OR REPLACE INTO weekly_analysis VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                analysis.player_id, analysis.week, analysis.season,
+                analysis.fantasy_points, analysis.usage_score, analysis.efficiency_score,
+                analysis.salary_performance_correlation, analysis.market_value_vs_performance
+            ))
