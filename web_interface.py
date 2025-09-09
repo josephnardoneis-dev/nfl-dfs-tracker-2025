@@ -20,11 +20,12 @@ salary_collector = DFSSalaryCollector(db_manager)
 @app.route('/')
 def index():
     """Main dashboard"""
-    # Automatically get the latest available data
+    # Get the latest data we actually have in our database
     try:
-        week, season = stats_collector.get_latest_available_data()
+        week, season = db_manager.get_latest_data_in_db()
+        print(f"Using database data: {season} Week {week}")
     except Exception as e:
-        print(f"Error getting latest data, using fallback: {e}")
+        print(f"Error getting database data, using fallback: {e}")
         week, season = 18, 2024  # Fallback
     
     # Get latest report
@@ -102,8 +103,11 @@ def get_salary_trends():
 def collect_latest_data():
     """Manually trigger data collection"""
     try:
-        # Get the latest available data automatically
-        target_week, target_season = stats_collector.get_latest_available_data()
+        # Try to get the latest available data, but fall back to what we have
+        try:
+            target_week, target_season = stats_collector.get_latest_available_data()
+        except Exception:
+            target_week, target_season = db_manager.get_latest_data_in_db()
         
         # Try to collect stats but handle gracefully if no new data
         try:
